@@ -1,0 +1,28 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ post.title }} - CTF Blog{% endblock %}
+
+{% block content %}
+<article>
+    <div style="margin-bottom: 2rem;">
+        <h1 style="color: #2c3e50; margin-bottom: 1rem;">{{ post.title }}</h1>
+        <div class="post-meta">
+            <span class="post-category">{{ post.category }}</span>
+            <span>Published on {{ post.created_at|date:"F d, Y" }}</span>
+            {% if post.updated_at != post.created_at %}
+            <span> • Updated on {{ post.updated_at|date:"F d, Y" }}</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="markdown-content">
+        {{ post.get_html_content|safe }}
+    </div>
+    
+    <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid #e0e0e0;">
+        <a href="{% url 'blog:post_list' %}" style="color: #3498db; text-decoration: none; font-weight: 500;">
+            ← Back to all posts
+        </a>
+    </div>
+</article>
+{% endblock %}

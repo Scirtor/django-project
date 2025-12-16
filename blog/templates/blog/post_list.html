@@ -1,0 +1,49 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+{% if current_category %}{{ current_category }} - {% endif %}CTF Blog
+{% endblock %}
+
+{% block content %}
+{% if current_category %}
+<h1 style="color: #2c3e50; margin-bottom: 2rem;">Posts in "{{ current_category }}"</h1>
+{% else %}
+<h1 style="color: #2c3e50; margin-bottom: 2rem;">All Posts</h1>
+{% endif %}
+
+{% if posts %}
+    {% for post in posts %}
+    <div class="post-card">
+        <h2><a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a></h2>
+        <div class="post-meta">
+            <span class="post-category">{{ post.category }}</span>
+            <span>{{ post.created_at|date:"F d, Y" }}</span>
+        </div>
+        {% if post.excerpt %}
+        <div class="post-excerpt">
+            {{ post.excerpt }}
+        </div>
+        {% endif %}
+        <a href="{% url 'blog:post_detail' post.slug %}" class="read-more">Read more →</a>
+    </div>
+    {% endfor %}
+    
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+        
+        <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
+    </div>
+    {% endif %}
+{% else %}
+    <p style="color: #7f8c8d; font-style: italic;">No posts available yet. Check back soon!</p>
+{% endif %}
+{% endblock %}
