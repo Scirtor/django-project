@@ -2,8 +2,6 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 import markdown
-from markdown.extensions.codehilite import CodeHiliteExtension
-from markdown.extensions.fenced_code import FencedCodeExtension
 
 # Create your models here.
 

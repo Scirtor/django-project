@@ -32,23 +32,33 @@ A Django-based blog application designed for hosting CTF (Capture The Flag) writ
    pip install -r requirements.txt
    ```
 
-3. **Run migrations**
+3. **Configure environment variables (optional)**
+   ```bash
+   cp .env.example .env
+   # Edit .env and set your SECRET_KEY for production
+   ```
+   For production, generate a new secret key:
+   ```bash
+   python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
+   ```
+
+4. **Run migrations**
    ```bash
    python manage.py migrate
    ```
 
-4. **Create a superuser**
+5. **Create a superuser**
    ```bash
    python manage.py createsuperuser
    ```
    Follow the prompts to create your admin account.
 
-5. **Run the development server**
+6. **Run the development server**
    ```bash
    python manage.py runserver
    ```
 
-6. **Access the application**
+7. **Access the application**
    - Website: http://localhost:8000
    - Admin panel: http://localhost:8000/admin
 
@@ -156,11 +166,19 @@ The modular structure makes it easy to extend:
 
 For production deployment:
 
-1. **Update settings**
-   ```python
-   DEBUG = False
-   ALLOWED_HOSTS = ['yourdomain.com']
-   SECRET_KEY = 'your-secure-secret-key'
+1. **Configure environment variables**
+   
+   Set these environment variables in your production environment:
+   ```bash
+   export DJANGO_SECRET_KEY='your-secure-secret-key'
+   export DJANGO_DEBUG='False'
+   export DJANGO_ALLOWED_HOSTS='yourdomain.com,www.yourdomain.com'
+   ```
+   
+   Or use a `.env` file (not recommended for production, use your platform's secret management):
+   ```bash
+   cp .env.example .env
+   # Edit .env with production values
    ```
 
 2. **Collect static files**
