@@ -36,8 +36,6 @@ class Post(models.Model):
         md = markdown.Markdown(extensions=[
             'extra',
             'codehilite',
-            'fenced_code',
-            'tables',
             'toc',
         ])
         return md.convert(self.content)
