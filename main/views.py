@@ -2,6 +2,12 @@ from django.shortcuts import render, redirect
 from .models import Item
 from .forms import RegisterForm, ItemForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def logout_view(request):
+    logout(request)
+    return redirect('/')
 
 def home(request):
     items = Item.objects.all().order_by('-date')
