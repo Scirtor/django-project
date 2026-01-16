@@ -30,7 +30,7 @@ def register(request):
 
 
 @login_required
-def add_item(request, item_id=None):
+def add_item(request):
     if request.method == "POST":
         form = ItemForm(request.POST)
         if form.is_valid():
@@ -45,7 +45,7 @@ def add_item(request, item_id=None):
 
 
 @csrf_exempt
-def items_api(request):
+def items_api(request, item_id=None):
     if request.method == 'GET':
         items = list(Item.objects.values(
             'id', 'title', 'description', 'status', 'author_id', 'date'
