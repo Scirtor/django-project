@@ -1,0 +1,8 @@
+./myproject/__pycache__
+./main/__pycache__
+./main/migrations/__pycache__
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
