@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import home, register, add_item, logout_view
 from django.contrib.auth import views as auth_views
+from .views import items_api
+
 
 urlpatterns = [
     path('', home, name='home'),
@@ -8,4 +10,6 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', logout_view, name='logout'),
     path('add/', add_item, name='add_item'),
+    path('api/items/', items_api),
+    path('api/items/<int:item_id>/', items_api),
 ]
