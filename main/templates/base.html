@@ -1,38 +1,92 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Lost & Found Portal</title>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lost &amp; Found Portal</title>
 
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
-    <!-- Наши стили -->
     {% load static %}
-    <link rel="stylesheet" href="{% static 'main/styles.css' %}">
-</head>
+    <link rel="stylesheet" href="{% static 'main/styles.css' %}" />
+  </head>
 
-<body class="bg-light">
+  <body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand fw-semibold" href="/">Lost &amp; Found</a>
 
-<nav class="navbar navbar-dark bg-dark">
-    {% if user.is_authenticated %}
-<p>Hi, {{ user.username }} |
-<a href="/logout/">Logout</a></p>
-{% else %}
-<p>
-<a href="/login/">Login</a> |
-<a href="/register/">Register</a>
-</p>
-{% endif %}
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarContent"
+          aria-controls="navbarContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-  <div class="container">
-    <span class="navbar-brand">Lost & Found Portal</span>
-  </div>
-</nav>
+        <div
+          class="collapse navbar-collapse justify-content-end"
+          id="navbarContent"
+        >
+          <ul class="navbar-nav mb-2 mb-lg-0">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <span class="nav-link disabled">Hi, {{ user.username }}</span>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/add/">Add item</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout/">Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="/login/">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/register/">Register</a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-<div class="container mt-4">
-    {% block content %}
-    {% endblock %}
-</div>
+    <main class="container py-4 flex-grow-1">
+      {% block content %}{% endblock %}
+    </main>
 
-</body>
+    <footer class="mt-auto py-3 bg-dark text-light">
+      <div
+        class="container d-flex flex-column flex-sm-row justify-content-between align-items-center small"
+      >
+        <span
+          >&copy; {{ now|default:None|date:"Y" }} Lost &amp; Found Portal</span
+        >
+        <span class="mt-2 mt-sm-0 text-secondary">
+          Made by Nurzhan &amp; Shavkat.
+        </span>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var tooltipTriggerList = [].slice.call(
+          document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+        );
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+          new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+      });
+    </script>
+  </body>
 </html>
