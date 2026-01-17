@@ -61,6 +61,8 @@ def items_api(request, item_id=None):
             status=data['status'],
             author_id=data['author_id']
         )
+        
+        return JsonResponse({'id': item.id, 'status': 'created'})
 
     if request.method == 'PUT':
         if not item_id:
