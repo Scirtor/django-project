@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Item
+from .models import Item, Comment
 
 
 class RegisterForm(UserCreationForm):
@@ -33,11 +33,11 @@ class RegisterForm(UserCreationForm):
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        fields = ['title', 'description', 'status', 'contact']
+        fields = ['title', 'description', 'status', 'contact', 'image']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Short title, e.g. “Lost wallet near park”',
+                'placeholder': 'Short title, e.g. "Lost wallet near park"',
             }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
@@ -50,6 +50,10 @@ class ItemForm(forms.ModelForm):
             'contact': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Phone number, Telegram, email…',
+            }),
+            'image': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*',
             }),
         }
 
@@ -68,3 +72,16 @@ class LoginForm(AuthenticationForm):
             'placeholder': 'Password',
         })
     )
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Write your comment...',
+            }),
+        }
