@@ -165,10 +165,32 @@ body {
     transform: translateY(0);
 }
 
-/* Force modal to stay at bottom */
+/* Force modal to stay at bottom (only when open) */
 .bottom-sheet-modal {
-    display: flex !important;
+    display: none !important;
     align-items: flex-end !important;
+    pointer-events: none;
+}
+
+.bottom-sheet-modal.show {
+    display: flex !important;
+    pointer-events: auto;
+}
+
+/* Bootstrap keeps hidden modals with aria-hidden="true" */
+.bottom-sheet-modal[aria-hidden="true"] {
+    display: none !important;
+    pointer-events: none;
+}
+
+/* Safety: never let hidden modals intercept clicks */
+.modal:not(.show) {
+    display: none !important;
+    pointer-events: none;
+}
+
+.modal.show {
+    pointer-events: auto;
 }
 
 .bottom-sheet-modal .modal-dialog {

@@ -2,110 +2,235 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4" style="max-width: 614px; margin-left: auto; margin-right: auto;">
+
+<style>
+    /* Comment input hover and focus states */
+    .comment-input:focus {
+        border-color: #86b7fe !important;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+    }
+
+    .send-button:hover {
+        background-color: #0b5ed7 !important;
+        transform: translateY(-1px);
+    }
+
+    .send-button:active {
+        transform: translateY(0);
+    }
+</style>
+
+<!-- Search and Filter Bar -->
+<div class="mb-4" style="max-width: 614px; margin: 0 auto;">
+    <form method="get" action="{% url 'home' %}" style="width: 100%;">
+        <!-- Search Input -->
+        <div class="input-group" style="width: 100%;">
+            <span class="input-group-text bg-white border-end-0" style="border-radius: 8px 0 0 8px;">
+                <i class="bi bi-search text-muted"></i>
+            </span>
+            <input type="text" name="q" class="form-control border-start-0 ps-0"
+                placeholder="Search by title or description..." value="{{ search_query }}"
+                style="border-radius: 0 8px 8px 0;">
+        </div>
+
+        <!-- Hidden submit - form submits on change via JS -->
+        <noscript>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary w-100" style="border-radius: 8px;">Apply Filters</button>
+            </div>
+        </noscript>
+    </form>
+</div>
+
+<script>
+    // Auto-submit form when filters change
+    document.addEventListener('DOMContentLoaded', function () {
+        const filterForm = document.querySelector('form[method="get"]');
+        if (filterForm) {
+            const selects = filterForm.querySelectorAll('select');
+            selects.forEach(select => {
+                select.addEventListener('change', function () {
+                    filterForm.submit();
+                });
+            });
+
+            // Submit on Enter key in search input
+            const searchInput = filterForm.querySelector('input[name="q"]');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function (e) {
+                    if (e.key  == = 'Enter') {
+                        e.preventDefault();
+                        filterForm.submit();
+                    }
+                });
+            }
+        }
+    });
+</script>
+
+<div class="d-flex justify-content-between align-items-center mb-4"
+    style="max-width: 614px; margin: 0 auto;">
     <h3 class="mb-0" style="font-weight: 600;">Latest posts</h3>
 
     {% if user.is_authenticated %}
-        <a href="/add/" class="btn btn-primary" style="border-radius: 8px; font-weight: 600;">+ Add item</a>
+    <a href="/add/" class="btn btn-primary" style="border-radius: 8px; font-weight: 600;">+ Add item</a>
     {% else %}
-        <a href="/login/" class="btn btn-outline-primary btn-sm" style="border-radius: 8px;">Login to add item</a>
+    <a href="/login/" class="btn btn-outline-primary btn-sm" style="border-radius: 8px;">Login to add item</a>
     {% endif %}
 </div>
 
 {% if not items %}
-    <div class="text-center py-5" style="max-width: 614px; margin: 0 auto;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#8e8e8e" class="bi bi-inbox mb-3" viewBox="0 0 16 16">
-            <path d="M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0 .5.5 0 0 1 .5-.5h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4H4.98zm9.954 5H11.5a.5.5 0 0 1-.5-.5 1.5 1.5 0 0 0-3 0 .5.5 0 0 1-.5.5H1.066l.32 2.562a.5.5 0 0 0 .497.438h12.234a.5.5 0 0 0 .496-.438L14.933 9zM3.809 3.563A1.5 1.5 0 0 1 4.981 3h6.038a1.5 1.5 0 0 1 1.172.563l3.7 4.625a.5.5 0 0 1 .128.416l-.39 3.124A1.5 1.5 0 0 1 14.117 13H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .128-.416l3.7-4.625z"/>
-        </svg>
-        <h5 class="text-muted mb-2">No posts yet</h5>
-        <p class="text-muted mb-0">Пока записей нет. Добавьте первый потерянный или найденный предмет.</p>
-    </div>
+<div class="text-center py-5" style="max-width: 614px; margin: 0 auto;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#8e8e8e" class="bi bi-inbox mb-3"
+        viewBox="0 0 16 16">
+        <path
+            d="M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0 .5.5 0 0 1 .5-.5h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4H4.98zm9.954 5H11.5a.5.5 0 0 1-.5-.5 1.5 1.5 0 0 0-3 0 .5.5 0 0 1-.5.5H1.066l.32 2.562a.5.5 0 0 0 .497.438h12.234a.5.5 0 0 0 .496-.438L14.933 9zM3.809 3.563A1.5 1.5 0 0 1 4.981 3h6.038a1.5 1.5 0 0 1 1.172.563l3.7 4.625a.5.5 0 0 1 .128.416l-.39 3.124A1.5 1.5 0 0 1 14.117 13H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .128-.416l3.7-4.625z" />
+    </svg>
+    <h5 class="text-muted mb-2">No posts yet</h5>
+    <p class="text-muted mb-0">Пока записей нет. Добавьте первый потерянный или найденный предмет.</p>
+</div>
 {% endif %}
 
 {% for item in items %}
-    <div class="instagram-post mb-4">
-        <!-- Фото -->
+<div class="instagram-post mb-4" style="max-width: 614px; margin: 0 auto;">
+    <!-- Фото -->
+    <div class="post-image-container position-relative">
         {% if item.image %}
-            <div class="post-image-container">
-                <img src="{{ item.image.url }}" class="post-image" alt="{{ item.title }}">
-            </div>
+        <img src="{{ item.image.url }}" class="post-image" alt="{{ item.title }}">
+
+        {% if user.is_authenticated and user  ==  item.author %}
+        <div class="dropdown position-absolute top-0 end-0 m-2">
+            <button class="btn btn-sm" type="button" id="dropdownMenuButton{{ item.id }}" data-bs-toggle="dropdown"
+                aria-expanded="false" style="background: transparent; border: none; padding: 0.25rem 0.5rem;">
+                <i class="bi bi-three-dots-vertical" style="font-size: 1.25rem; color: #333;"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton{{ item.id }}">
+                <li>
+                    <a class="dropdown-item" href="{% url 'edit_item' item.id %}">
+                        <i class="bi bi-pencil me-2"></i>
+                        Edit
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li>
+                    <form method="post" action="{% url 'delete_item' item.id %}"
+                        onsubmit="return confirm('Are you sure you want to delete this post?');" class="d-inline w-100">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-item text-danger"
+                            style="border: none; background: none; width: 100%; text-align: left;">
+                            <i class="bi bi-trash me-2"></i>
+                            Delete
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
         {% endif %}
+        {% endif %}
+    </div>
 
-        <!-- Данные под фото -->
-        <div class="post-content">
-            <!-- Заголовок и статус -->
-            <div class="post-header">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h5 class="post-title mb-0">{{ item.title }}</h5>
-                    <span class="badge bg-primary">{{ item.get_status_display }}</span>
+    <!-- Данные под фото -->
+    <div class="post-content">
+        <!-- Заголовок и статус -->
+        <div class="post-header">
+            <div class="d-flex align-items-center mb-2">
+                <h5 class="post-title mb-0">{{ item.title }}</h5>
+                <span class="badge bg-primary ms-auto me-2">{{ item.get_status_display }}</span>
+                {% if user.is_authenticated and user  ==  item.author and not item.image %}
+                <div class="dropdown ms-2">
+                    <button class="btn btn-sm" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false" style="background: transparent; border: none; padding: 0.25rem 0.5rem;">
+                        <i class="bi bi-three-dots-vertical" style="font-size: 1.25rem; color: #333;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'edit_item' item.id %}">
+                                <i class="bi bi-pencil me-2"></i>
+                                Edit
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form method="post" action="{% url 'delete_item' item.id %}"
+                                onsubmit="return confirm('Are you sure you want to delete this post?');"
+                                class="d-inline w-100">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item text-danger"
+                                    style="border: none; background: none; width: 100%; text-align: left;">
+                                    <i class="bi bi-trash me-2"></i>
+                                    Delete
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
-            </div>
-
-            <!-- Описание -->
-           
-                <p class="mb-0">{{ item.description }}</p>
-          
-
-            <!-- Метаданные -->
-            <div class="post-meta mb-3">
-                {% if item.category %}
-                    <div class="meta-item mb-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-tag me-2" viewBox="0 0 16 16">
-                            <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0z"/>
-                            <path d="M2 2h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2zm1 1v4.586l7 7L13.586 10l-7-7H3z"/>
-                        </svg>
-                        <span class="text-muted">Category:</span> <strong>{{ item.category.name }}</strong>
-                    </div>
                 {% endif %}
-                {% if item.location %}
-                    <div class="meta-item mb-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt me-2" viewBox="0 0 16 16">
-                            <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57C4.825 10.99 4.1 9.93 3.584 8.87L8 11.314l4.166-2.374zM8 9.314l-4.166-2.374C4.1 6.07 4.825 5.01 5.794 3.96A31.493 31.493 0 0 1 8 1.42a31.481 31.481 0 0 1 2.206 2.54c.969 1.05 1.694 2.11 2.21 3.154L8 9.314z"/>
-                            <path d="M8 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM8 1a7 7 0 1 1 0 14A7 7 0 0 1 8 1z"/>
-                        </svg>
-                        <span class="text-muted">Location:</span> <strong>{{ item.location.name }}</strong>
-                    </div>
-                {% endif %}
-                <div class="meta-item mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone me-2" viewBox="0 0 16 16">
-                        <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-1.015-.063l-.97.97a.678.678 0 0 1-.063-1.015l.97-.97a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-1.015-.063l-1.034 1.034a.678.678 0 0 1-.45.168H5.678a.678.678 0 0 1-.168-.45l1.034-1.034a.678.678 0 0 0-.063-1.015L4.328 3.654a.678.678 0 0 0-.063-1.015l.97-.97a.678.678 0 0 1-.063-1.015l-.97.97z"/>
-                    </svg>
-                    <span class="text-muted">Contact:</span> <strong>{{ item.contact }}</strong>
-                </div>
-                <div class="meta-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person me-2" viewBox="0 0 16 16">
-                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
-                    </svg>
-                    <span class="text-muted">Posted by:</span> <strong>{{ item.author.username }}</strong>
-                </div>
-            </div>
-
-            <!-- Кнопка комментариев -->
-            <div class="post-actions">
-                <button 
-                    type="button" 
-                    class="btn btn-outline-primary w-100" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#commentsModal{{ item.id }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-chat-left-text me-2" viewBox="0 0 16 16">
-                        <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                        <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 6a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6A.5.5 0 0 1 3 6zm0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
-                    </svg>
-                    Comments 
-                    <span class="badge bg-primary ms-2">{{ item.comments.count }}</span>
-                </button>
             </div>
         </div>
+
+        <!-- Описание -->
+
+        <p class="mb-0">{{ item.description }}</p>
+
+
+        <!-- Метаданные -->
+        <div class="post-meta mb-3">
+            {% if item.category %}
+            <div class="meta-item mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-tag me-2" viewBox="0 0 16 16">
+                    <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0z" />
+                    <path
+                        d="M2 2h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2zm1 1v4.586l7 7L13.586 10l-7-7H3z" />
+                </svg>
+                <span class="text-muted">Category:</span> <strong>{{ item.category.name }}</strong>
+            </div>
+            {% endif %}
+            {% if item.location %}
+            <div class="meta-item mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-geo-alt me-2" viewBox="0 0 16 16">
+                    <path
+                        d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57C4.825 10.99 4.1 9.93 3.584 8.87L8 11.314l4.166-2.374zM8 9.314l-4.166-2.374C4.1 6.07 4.825 5.01 5.794 3.96A31.493 31.493 0 0 1 8 1.42a31.481 31.481 0 0 1 2.206 2.54c.969 1.05 1.694 2.11 2.21 3.154L8 9.314z" />
+                    <path d="M8 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM8 1a7 7 0 1 1 0 14A7 7 0 0 1 8 1z" />
+                </svg>
+                <span class="text-muted">Location:</span> <strong>{{ item.location.name }}</strong>
+            </div>
+            {% endif %}
+            <div class="meta-item mb-2">
+                <i class="bi bi-telephone me-2"></i>
+                <span class="text-muted">Contact:</span> <strong>{{ item.contact }}</strong>
+            </div>
+            <div class="meta-item">
+                <i class="bi bi-person me-2"></i>
+                <span class="text-muted">Posted by:</span> <strong>{{ item.author.username }}</strong>
+            </div>
+        </div>
+
+        <!-- Кнопка комментариев -->
+        <div class="post-actions">
+            <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal"
+                data-bs-target="#commentsModal{{ item.id }}">
+                <i class="bi bi-chat-dots me-2" style="font-size: 1.1rem;"></i>
+                Comments
+                <span class="badge bg-primary ms-2">{{ item.comments.count }}</span>
+            </button>
+        </div>
     </div>
+</div>
 {% endfor %}
 
 <!-- Модальные окна для комментариев -->
 {% for item in items %}
-<div class="modal fade bottom-sheet-modal" id="commentsModal{{ item.id }}" tabindex="-1" aria-labelledby="commentsModalLabel{{ item.id }}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-dialog-bottom">
+<div class="modal fade" id="commentsModal{{ item.id }}" tabindex="-1" aria-labelledby="commentsModalLabel{{ item.id }}"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
         <div class="modal-content">
-            <!-- Индикатор для закрытия (как в Telegram) -->
-            <div class="modal-drag-handle"></div>
             <div class="modal-header">
                 <h5 class="modal-title" id="commentsModalLabel{{ item.id }}">
                     Comments on "{{ item.title }}"
@@ -116,50 +241,51 @@
                 <!-- Список комментариев -->
                 <div id="commentsList{{ item.id }}">
                     {% if item.comments.all %}
-                        {% for comment in item.comments.all %}
-                            <div class="comment-card">
-                                <div class="comment-avatar">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
-                                    </svg>
-                                </div>
-                                <div class="comment-body">
-                                    <div class="comment-meta">
-                                        <div class="comment-author">{{ comment.author.username }}</div>
-                                        <div class="comment-time">{{ comment.created_at|date:"M d, Y H:i" }}</div>
-                                    </div>
-                                    <p class="comment-text mb-0">{{ comment.text }}</p>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="text-center text-muted py-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-chat-left-text mb-2 opacity-50" viewBox="0 0 16 16">
-                                <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                                <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 6a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6A.5.5 0 0 1 3 6zm0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
+                    {% for comment in item.comments.all %}
+                    <div class="comment-card">
+                        <div class="comment-avatar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-person" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z" />
                             </svg>
-                            <p class="mb-0">No comments yet. Be the first to comment!</p>
                         </div>
+                        <div class="comment-body">
+                            <div class="comment-meta">
+                                <div class="comment-author">{{ comment.author.username }}</div>
+                                <div class="comment-time">{{ comment.created_at|date:"M d, Y H:i" }}</div>
+                            </div>
+                            <p class="comment-text mb-0">{{ comment.text }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center text-muted py-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+                            class="bi bi-chat-left-text mb-2 opacity-50" viewBox="0 0 16 16">
+                            <path
+                                d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                            <path
+                                d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 6a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6A.5.5 0 0 1 3 6zm0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z" />
+                        </svg>
+                        <p class="mb-0">No comments yet. Be the first to comment!</p>
+                    </div>
                     {% endif %}
                 </div>
             </div>
             <!-- Форма для добавления комментария в footer -->
             {% if user.is_authenticated %}
-            <div class="modal-footer">
-                <form method="post" action="{% url 'add_comment' item.id %}" id="commentForm{{ item.id }}" class="w-100 comment-form">
+            <div class="modal-footer" style="border-top: 1px solid #dee2e6;">
+                <form method="post" action="{% url 'add_comment' item.id %}" id="commentForm{{ item.id }}"
+                    class="w-100 comment-form">
                     {% csrf_token %}
-                    <div class="input-group">
-                        <textarea 
-                            name="text" 
-                            class="form-control comment-input" 
-                            rows="2" 
-                            placeholder="Write your comment..."
-                            required></textarea>
-                        <button type="submit" class="btn btn-primary send-button" aria-label="Send">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
-                                <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855a.75.75 0 0 0-.124 1.33l4.995 3.178 3.178 4.995a.75.75 0 0 0 1.33-.124l5.818-14.547Z"/>
-                                <path d="M6.063 10.563 14 2.626 7.082 9.544l-1.019 1.019Z"/>
-                            </svg>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <textarea name="text" class="form-control comment-input" id="commentInput{{ item.id }}" rows="2"
+                            placeholder="Write your comment..." required
+                            style="resize: none; flex: 1; border-radius: 8px; border: 1px solid #ced4da; padding: 8px 12px; font-size: 0.95rem; line-height: 1.5; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;"></textarea>
+                        <button type="submit" class="btn btn-primary send-button" aria-label="Send"
+                            style="height: 40px; min-width: 40px; padding: 0 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: none; transition: background-color 0.15s ease-in-out, transform 0.1s ease;">
+                            <i class="bi bi-send-fill" style="font-size: 1rem;"></i>
                         </button>
                     </div>
                 </form>
@@ -177,76 +303,50 @@
 {% endfor %}
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Инициализация всех модальных окон с bottom sheet стилем
-    {% for item in items %}
-    const modal{{ item.id }} = document.getElementById('commentsModal{{ item.id }}');
-    if (modal{{ item.id }}) {
-        // Обработка показа модального окна
-        modal{{ item.id }}.addEventListener('show.bs.modal', function() {
-            this.classList.add('show');
-            document.body.classList.add('modal-open');
-            const backdrop = document.createElement('div');
-            backdrop.className = 'modal-backdrop fade show';
-            backdrop.setAttribute('data-bs-dismiss', 'modal');
-            document.body.appendChild(backdrop);
-        });
-
-        // Обработка скрытия модального окна
-        modal{{ item.id }}.addEventListener('hide.bs.modal', function() {
-            this.classList.remove('show');
-            document.body.classList.remove('modal-open');
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-                backdrop.remove();
+    document.addEventListener("DOMContentLoaded", function () {
+        // Open modal from URL parameter after comment submission
+        const urlParams = new URLSearchParams(window.location.search);
+        const openModalId = urlParams.get('open_modal');
+        if (openModalId) {
+            const modalElement = document.getElementById('commentsModal' + openModalId);
+            if (modalElement) {
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+                window.history.replaceState({}, document.title, window.location.pathname);
             }
-        });
+        }
 
-        // Закрытие при клике на backdrop
-        modal{{ item.id }}.addEventListener('click', function(e) {
-            if (e.target === this) {
-                bootstrap.Modal.getInstance(this).hide();
-            }
-        });
+        // Handle modal shown event for all comment modals
+        document.querySelectorAll('[id^="commentsModal"]').forEach(function (modalElement) {
+            modalElement.addEventListener('shown.bs.modal', function () {
+                // Get the item ID from modal ID
+                const itemId = this.id.replace('commentsModal', '');
 
-        // Закрытие при клике на индикатор (drag handle)
-        const dragHandle{{ item.id }} = modal{{ item.id }}.querySelector('.modal-drag-handle');
-        if (dragHandle{{ item.id }}) {
-            dragHandle{{ item.id }}.addEventListener('click', function() {
-                const modalInstance = bootstrap.Modal.getInstance(modal{{ item.id }});
-                if (modalInstance) {
-                    modalInstance.hide();
+                // Autofocus textarea
+                const textarea = document.getElementById('commentInput' + itemId);
+                if (textarea) {
+                    textarea.focus();
+                }
+
+                // Auto-scroll comments to bottom
+                const commentsList = document.getElementById('commentsList' + itemId);
+                if (commentsList) {
+                    commentsList.scrollTop = commentsList.scrollHeight;
                 }
             });
-        }
-    }
-    {% endfor %}
-
-    // Автоматическое открытие модального окна после добавления комментария
-    const urlParams = new URLSearchParams(window.location.search);
-    const openModalId = urlParams.get('open_modal');
-    if (openModalId) {
-        const modalElement = document.getElementById('commentsModal' + openModalId);
-        if (modalElement) {
-            const modal = new bootstrap.Modal(modalElement);
-            modal.show();
-            // Очистить параметр из URL без перезагрузки
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
-    }
-
-    // Обработка отправки формы комментария
-    {% for item in items %}
-    {% if user.is_authenticated %}
-    const form{{ item.id }} = document.getElementById('commentForm{{ item.id }}');
-    if (form{{ item.id }}) {
-        form{{ item.id }}.addEventListener('submit', function(e) {
-            // Форма отправится обычным способом, страница перезагрузится
         });
-    }
-    {% endif %}
-    {% endfor %}
-});
+
+        // Keyboard shortcuts for comment textareas
+        document.querySelectorAll('.comment-input').forEach(function (textarea) {
+            textarea.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.form.submit();
+                }
+            });
+        });
+
+    });
 </script>
 
 {% endblock %}

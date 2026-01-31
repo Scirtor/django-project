@@ -1,6 +1,7 @@
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.db.models import Q
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -17,8 +18,22 @@ def logout_view(request):
 
 
 def home(request):
-    items = Item.objects.prefetch_related('comments__author').all()
-    return render(request, "home.html", {"items": items})
+    search_query = request.GET.get("q", "")
+
+    items = Item.objects.all()
+
+    if search_query:
+        items = items.filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+
+    context = {
+        "items": items,
+        "search_query": search_query,
+    }
+
+    return render(request, "home.html", context)
 
 
 def register(request):
@@ -68,6 +83,46 @@ def add_comment(request, item_id):
         form = CommentForm()
 
     return redirect("/")
+
+
+@login_required
+def delete_item(request, item_id):
+    try:
+        item = Item.objects.get(id=item_id)
+    except Item.DoesNotExist:
+        return redirect("/")
+
+    # Check if the user is the author of the item
+    if request.user != item.author:
+        return redirect("/")
+
+    if request.method == "POST":
+        item.delete()
+        return redirect("/")
+
+    return redirect("/")
+
+
+@login_required
+def edit_item(request, pk):
+    try:
+        item = Item.objects.get(pk=pk)
+    except Item.DoesNotExist:
+        return redirect("/")
+
+    # Check if the user is the author of the item
+    if request.user != item.author:
+        return redirect("/")
+
+    if request.method == "POST":
+        form = ItemForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect("/")
+    else:
+        form = ItemForm(instance=item)
+
+    return render(request, "edit_item.html", {"form": form, "item": item})
 
 
 @api_view(["GET", "POST"])
