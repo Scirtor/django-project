@@ -2,6 +2,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.db.models import Q
+from django.urls import reverse
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -14,7 +15,7 @@ from .serializers import ItemSerializer, CommentSerializer
 
 def logout_view(request):
     logout(request)
-    return redirect("/")
+    return redirect("home")
 
 
 def home(request):
@@ -41,7 +42,7 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("/")
+            return redirect("home")
     else:
         form = RegisterForm()
 
@@ -56,7 +57,7 @@ def add_item(request):
             item = form.save(commit=False)
             item.author = request.user
             item.save()
-            return redirect("/")
+            return redirect("home")
     else:
         form = ItemForm()
 
@@ -68,7 +69,7 @@ def add_comment(request, item_id):
     try:
         item = Item.objects.get(id=item_id)
     except Item.DoesNotExist:
-        return redirect("/")
+        return redirect("home")
 
     if request.method == "POST":
         form = CommentForm(request.POST)
@@ -78,11 +79,11 @@ def add_comment(request, item_id):
             comment.author = request.user
             comment.save()
             # Редирект с параметром для автоматического открытия модального окна
-            return redirect(f"/?open_modal={item_id}")
+            return redirect(f"{reverse('home')}?open_modal={item_id}")
     else:
         form = CommentForm()
 
-    return redirect("/")
+    return redirect("home")
 
 
 @login_required
@@ -90,17 +91,17 @@ def delete_item(request, item_id):
     try:
         item = Item.objects.get(id=item_id)
     except Item.DoesNotExist:
-        return redirect("/")
+        return redirect("home")
 
     # Check if the user is the author of the item
     if request.user != item.author:
-        return redirect("/")
+        return redirect("home")
 
     if request.method == "POST":
         item.delete()
-        return redirect("/")
+        return redirect("home")
 
-    return redirect("/")
+    return redirect("home")
 
 
 @login_required
@@ -108,17 +109,17 @@ def edit_item(request, pk):
     try:
         item = Item.objects.get(pk=pk)
     except Item.DoesNotExist:
-        return redirect("/")
+        return redirect("home")
 
     # Check if the user is the author of the item
     if request.user != item.author:
-        return redirect("/")
+        return redirect("home")
 
     if request.method == "POST":
         form = ItemForm(request.POST, request.FILES, instance=item)
         if form.is_valid():
             form.save()
-            return redirect("/")
+            return redirect("home")
     else:
         form = ItemForm(instance=item)
 

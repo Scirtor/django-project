@@ -74,9 +74,9 @@
     <h3 class="mb-0" style="font-weight: 600;">Latest posts</h3>
 
     {% if user.is_authenticated %}
-    <a href="/add/" class="btn btn-primary" style="border-radius: 8px; font-weight: 600;">+ Add item</a>
+    <a href="{% url 'add_item' %}" class="btn btn-primary" style="border-radius: 8px; font-weight: 600;">+ Add item</a>
     {% else %}
-    <a href="/login/" class="btn btn-outline-primary btn-sm" style="border-radius: 8px;">Login to add item</a>
+    <a href="{% url 'login' %}" class="btn btn-outline-primary btn-sm" style="border-radius: 8px;">Login to add item</a>
     {% endif %}
 </div>
 
@@ -293,7 +293,7 @@
             {% else %}
             <div class="modal-footer">
                 <div class="alert alert-info mb-0 w-100 text-center py-2">
-                    <a href="/login/" class="alert-link">Login</a> to add a comment
+                    <a href="{% url 'login' %}" class="alert-link">Login</a> to add a comment
                 </div>
             </div>
             {% endif %}

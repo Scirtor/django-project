@@ -103,7 +103,7 @@ DATABASES = {
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 DEBUG = os.getenv("DJANGO_DEBUG") == "True"
-ALLOWED_HOSTS = ["nvr.it.com", "http://www.nvr.it.com", "49.51.137.208"]
+ALLOWED_HOSTS = ["nvr.it.com", "www.nvr.it.com", "lostfound.nvr.it.com", "49.51.137.208"]
 
 
 
@@ -149,7 +149,7 @@ STATICFILES_DIRS = [
 ]
 
 # Media files (User uploaded files)
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Redirect URL after successful login
