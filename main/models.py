@@ -1,13 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
 import os
 
 
 def item_image_upload_path(instance, filename):
-    """Генерирует путь для сохранения изображения объявления"""
-    ext = filename.split('.')[-1]
-    filename = f"{instance.id}_{instance.title[:50]}.{ext}"
-    return os.path.join('items', filename)
+    """
+    Генерирует безопасное уникальное имя файла.
+    НИКОГДА не зависит от instance.id или title.
+    """
+    ext = filename.split('.')[-1].lower()
+    return os.path.join("items", f"{uuid.uuid4()}.{ext}")
 
 
 class Category(models.Model):
@@ -46,6 +49,7 @@ class Item(models.Model):
     contact = models.CharField(max_length=200)
     date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -53,6 +57,7 @@ class Item(models.Model):
         blank=True,
         related_name="items",
     )
+
     location = models.ForeignKey(
         Location,
         on_delete=models.SET_NULL,
@@ -60,11 +65,12 @@ class Item(models.Model):
         blank=True,
         related_name="items",
     )
+
     image = models.ImageField(
         upload_to=item_image_upload_path,
         null=True,
         blank=True,
-        help_text="Upload a photo of the item"
+        help_text="Upload a photo of the item",
     )
 
     class Meta:
@@ -90,3 +96,4 @@ class Comment(models.Model):
 
     def __str__(self) -> str:
         return f"Comment by {self.author.username} on {self.item.title}"
+
